@@ -4,10 +4,10 @@ name: CI/CD Fase 3
 on:
   #Especificamos la rama donde se ejecuta a la hora de subir archivos (hacer push).
   push:
-    branches: main
+    branches: master
   #Especificamos la rama donde se ejecuta a la hora de hacer un pull request.
   pull_request:
-    branches: main
+    branches: master
 
 #Definimos los jobs que se ejecutarán a la hora de hacer push o pull request.
 jobs:
