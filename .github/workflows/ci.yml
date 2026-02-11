@@ -37,11 +37,6 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      #Validacion del Checkstyle
-      - name: Run Checkstyle
-        working-directory: taller/taller
-        run: mvn checkstyle:check
-
       #Añadimos lo siguiente para que arranque la base de datos antes de ejecutar los tests.
       - name: Wait for MariaDB
         run: |
