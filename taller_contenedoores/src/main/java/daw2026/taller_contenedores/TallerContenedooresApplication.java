@@ -1,4 +1,4 @@
-package daw2026.taller_contenedoores;
+package daw2026.taller_contenedores;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

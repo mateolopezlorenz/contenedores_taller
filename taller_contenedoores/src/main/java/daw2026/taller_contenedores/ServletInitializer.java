@@ -1,4 +1,4 @@
-package daw2026.taller_contenedoores;
+package daw2026.taller_contenedores;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
