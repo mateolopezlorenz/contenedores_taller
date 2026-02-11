@@ -23,7 +23,7 @@ public class Tests {
 
     private ReparacionRepository reparacionRepository;
 
-    // ===== UNIT TESTS (8 tests) =====
+    // Tests unitarios 
     @Test
     void testCrearCoche() {
         Coche c = new Coche("1111AAA", "Toyota", "Corolla");
@@ -82,7 +82,7 @@ public class Tests {
         assertNotNull(c);
     }
 
-    // ===== SERVICE INTEGRATION TESTS (9 tests) =====
+    // Tests de integración con servicios
     @Test
     void testSaveCoche() {
         if (cocheService != null) {
@@ -171,7 +171,7 @@ public class Tests {
         }
     }
 
-    // ===== CONTROLLER INTEGRATION TESTS (9 tests) =====
+    // Tests de integración con controladores
     @Test
     void testControllerCochesSaveList() {
         if (cocheService != null) {
@@ -265,7 +265,7 @@ public class Tests {
         }
     }
 
-    // ===== REPOSITORY INTEGRATION TESTS (9 tests) =====
+    // Tests de integración con repositorios
     @Test
     void testSaveCocheRepository() {
         if (cocheRepository != null) {
