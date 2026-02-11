@@ -17,7 +17,7 @@ jobs:
     #Definimos los servicios, que en este caso es solo la base de datos.
     services:
       db:
-        image: mariadb:11.1
+        image: mariadb:10.6
         ports:
           - 3306:3306
         env:
@@ -25,11 +25,6 @@ jobs:
           MYSQL_DATABASE: tallerdb
           MYSQL_USER: talleruser
           MYSQL_PASSWORD: tallerpass
-        options: >-
-          --health-cmd="mysqladmin ping -h 127.0.0.1 -u root -proot123"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     steps:
       - name: Checkout code
