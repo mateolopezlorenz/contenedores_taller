@@ -1,4 +1,4 @@
-package daw2026.taller_contenedoores.fixtures;
+package daw2026.taller_contenedores.fixtures;
 
 import daw2026.taller_contenedores.model.Coche;
 import daw2026.taller_contenedores.model.Mecanico;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
-public class DataFixture {
+public class DataFixtures {
 
     @Bean
     CommandLineRunner initData(CocheRepository cocheRepository,
