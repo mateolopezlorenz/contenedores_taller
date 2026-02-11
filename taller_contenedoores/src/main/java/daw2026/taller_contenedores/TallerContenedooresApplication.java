@@ -5,9 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class TallerContenedooresApplication {
-
-	public static void main(String[] args) {
-		SpringApplication.run(TallerContenedooresApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(TallerContenedooresApplication.class, args);
+    }
 }

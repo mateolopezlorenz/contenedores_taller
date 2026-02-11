@@ -22,7 +22,7 @@
 	<name>taller_contenedoores</name>
 	<description>Aplicación backend para gestionar contenedores con Docker</description>
 
-	<!-- ==================== PROPIEDADES GLOBALES ==================== -->
+	<!--  PROPIEDADES GLOBALES  -->
 	<properties>
 		<!-- Versión de Java compatible -->
 		<java.version>21</java.version>
@@ -41,6 +41,13 @@
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- Base de datos para tests -->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 
