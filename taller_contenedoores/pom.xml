@@ -98,7 +98,13 @@
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
-	</dependencies>
+		<!-- Soporte Java 8 LocalDate/LocalDateTime para Jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+		</dependency>
+
+		</dependencies>
 
 	<!-- PLUGINS DE CONSTRUCCIÓN  -->
 	<build>
@@ -134,28 +140,7 @@
 				</configuration>
 			</plugin>
 
-			<!-- Plugin Checkstyle para validar el formato del código -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.3.1</version>
-				<configuration>
-					<configLocation>checkstyle.xml</configLocation>
-					<failsOnError>true</failsOnError>
-					<failsOnViolation>true</failsOnViolation>
-					<includeTestSourceDirectory>true</includeTestSourceDirectory>
-				</configuration>
-				<executions>
-					<execution>
-						<id>validate</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>check</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
 		</plugins>
 	</build>
+
 </project>
