@@ -1,45 +1,40 @@
 # Práctica Docker - Fase 3: Pipeline CI/CD
 
 ## Descripción
-
 Se ha realizado la práctica del módulo **Despliegue y administración de contenedores**, cuyo objetivo es implementar una pipeline CI/CD para una aplicación Java haciendo uso de **Docker** y **GitHub Actions**. La aplicación que ha sido desarrollada consta de una API REST basada en un **taller de coches**, donde se gestionan las siguientes entidades:
-
 - **Coche** (`coche`): matrícula, marca, modelo.
 - **Mecánico** (`mecanico`): nombre, especialidad.
 - **Reparación** (`reparacion`): coche, mecánico, fecha, descripción, horas, precio.
 
 ### Estructura del proyecto
-
 ```
-taller/taller/
+taller_contenedoores/
 ├── pom.xml
 ├── Dockerfile
-├── docker-compose.yaml
+├── docker-compose.yml
+├── checkstyle.xml
 ├── src/
 │   ├── main/
-│   │   ├── java/mateolopez/taller/
+│   │   ├── java/daw2026/taller_contenedores/
 │   │   │   ├── model/              # Entidades (Coche, Mecanico, Reparacion)
 │   │   │   ├── repository/         # Repositorios 
 │   │   │   ├── service/            # Servicios
 │   │   │   ├── controller/         # Controladores REST
-│   │   │   └── TallerApplication.java
+│   │   │   ├── fixtures/           # Datos de prueba (DataFixtures)
+│   │   │   └── TallerContenedooresApplication.java
 │   │   └── resources/
 │   │       └── application.properties
 │   └── test/
-│       ├── java/mateolopez/taller/
-│       │   ├── Tests.java
-│       │   ├── TallerApplicationTests.java
-│       │   └── fixtures/DataFixtures.java  # Datos de prueba
+│       ├── java/daw2026/taller_contenedores/
+│       │   └── Tests.java
 │       └── resources/
-│           └── application-test.properties # Configuración H2 para tests
+│           └── application-test.properties
 └── .github/workflows/
     └── ci.yml                      # Pipeline CI/CD con GitHub Actions
 ```
 
 ## Puesta en marcha
-
 ### Iniciar la aplicación con Docker Compose
-
 ```
 cd taller_contenedoores/
 mvn clean package -DskipTests
@@ -49,20 +44,17 @@ docker compose up -d --build
 Esto levantara:
 - **MariaDB** en el puerto 3306 con la base de datos `tallerdb`.
 - **Aplicación Tomcat** en el puerto 8080.
-
 Los datos de prueba (fixtures) se cargan automáticamente al arrancar la aplicación a través de la clase `DataFixtures`, que inserta:
 - 5 mecánicos
 - 10 coches
 - 10 reparaciones
 
 ### Parar la aplicación
-
 ```
 docker compose down -v
 ```
 
 ## Ejecución de tests
-
 Los tests se ejecutan con H2 en memoria (perfil `test`), sin necesidad de base de datos externa:
 
 ```
@@ -71,16 +63,13 @@ mvn clean test
 ```
 
 ### Ejecución del linting (Checkstyle)
-
 ```
 cd taller_contenedoores/
 mvn checkstyle:check
 ```
 
 ## Endpoints de la API
-
 ### Coches
-
 | Método | Endpoint                      | Descripción                    |
 |--------|-------------------------------|--------------------------------|
 | GET    | `/coches`                     | Listar todos los coches        |
@@ -89,7 +78,6 @@ mvn checkstyle:check
 | POST   | `/coches`                     | Crear un nuevo coche           |
 
 ### Mecánicos
-
 | Método | Endpoint            | Descripción                       |
 |--------|---------------------|-----------------------------------|
 | GET    | `/mecanicos`        | Listar todos los mecánicos        |
@@ -97,7 +85,6 @@ mvn checkstyle:check
 | POST   | `/mecanicos`        | Crear un nuevo mecánico           |
 
 ### Reparaciones
-
 | Método | Endpoint                       | Descripción                             |
 |--------|--------------------------------|-----------------------------------------|
 | GET    | `/reparaciones`                | Listar todas las reparaciones           |
@@ -107,47 +94,42 @@ mvn checkstyle:check
 | POST   | `/reparaciones`                | Crear una nueva reparación              |
 
 ### Ejemplos con curl
-
 ```bash
 # Listar todos los coches
-curl -s http://localhost:8080/coches | jq
+curl http://localhost:8080/coches
 
 # Obtener un coche por ID
-curl -s http://localhost:8080/coches/1 | jq
+curl http://localhost:8080/coches/1
 
 # Obtener un coche por matrícula
-curl -s http://localhost:8080/coches/matricula/1111AAA | jq
+curl http://localhost:8080/coches/matricula/1111AAA
 
 # Crear un nuevo coche
-curl -s -X POST http://localhost:8080/coches \
+curl -X POST http://localhost:8080/coches \
   -H "Content-Type: application/json" \
-  -d '{"matricula":"NEW1234","marca":"Tesla","modelo":"Model 3"}' | jq
+  -d '{"matricula":"NEW1234","marca":"Tesla","modelo":"Model 3"}'
 
 # Listar todos los mecánicos
-curl -s http://localhost:8080/mecanicos | jq
+curl http://localhost:8080/mecanicos
 
 # Listar todas las reparaciones
-curl -s http://localhost:8080/reparaciones | jq
+curl http://localhost:8080/reparaciones
 
 # Reparaciones de un coche concreto
-curl -s http://localhost:8080/reparaciones/coche/1 | jq
+curl http://localhost:8080/reparaciones/coche/1
 
 # Reparaciones de un mecánico concreto
-curl -s http://localhost:8080/reparaciones/mecanico/1 | jq
+curl http://localhost:8080/reparaciones/mecanico/1
 ```
 
 ## Pruebas de la API con curl
-
 ### Requisitos
 - La aplicación debe estar ejecutándose en `http://localhost:8080`
 - `curl` instalado
-- (Opcional) `jq` para formatear la salida JSON
 
 ### Flujo de pruebas completo
-
 #### 1. Consultar datos existentes
-
-```
+```bash
 # Ver todos los coches
 curl -X GET http://localhost:8080/coches
 
@@ -159,8 +141,7 @@ curl -X GET http://localhost:8080/reparaciones
 ```
 
 #### 2. Crear nuevos registros
-
-```
+```bash
 # Crear un nuevo coche
 curl -X POST http://localhost:8080/coches \
   -H "Content-Type: application/json" \
@@ -168,7 +149,7 @@ curl -X POST http://localhost:8080/coches \
     "matricula": "9999ZZZ",
     "marca": "Renault",
     "modelo": "Clio"
-  }' | jq
+  }'
 
 # Crear un nuevo mecánico
 curl -X POST http://localhost:8080/mecanicos \
@@ -176,7 +157,7 @@ curl -X POST http://localhost:8080/mecanicos \
   -d '{
     "nombre": "Roberto",
     "especialidad": "Electricista"
-  }' | jq
+  }'
 
 # Crear una nueva reparación (requiere IDs existentes de coche y mecánico)
 curl -X POST http://localhost:8080/reparaciones \
@@ -188,40 +169,37 @@ curl -X POST http://localhost:8080/reparaciones \
     "descripcion": "Revisión completa",
     "horas": 3,
     "precio": 150.00
-  }' | jq
+  }'
 ```
 
 #### 3. Consultar por ID
-
-```
+```bash
 # Obtener coche específico
-curl -X GET http://localhost:8080/coches/1 | jq
+curl -X GET http://localhost:8080/coches/1
 
 # Obtener mecánico específico
-curl -X GET http://localhost:8080/mecanicos/1 | jq
+curl -X GET http://localhost:8080/mecanicos/1
 
 # Obtener reparación específica
-curl -X GET http://localhost:8080/reparaciones/1 | jq
+curl -X GET http://localhost:8080/reparaciones/1
 ```
 
 #### 4. Consultas específicas
-
-```
+```bash
 # Obtener coche por matrícula
-curl -X GET "http://localhost:8080/coches/matricula/1111AAA" | jq
+curl -X GET "http://localhost:8080/coches/matricula/1111AAA"
 
 # Obtener reparaciones de un coche
-curl -X GET http://localhost:8080/reparaciones/coche/1 | jq
+curl -X GET http://localhost:8080/reparaciones/coche/1
 
 # Obtener reparaciones de un mecánico
-curl -X GET http://localhost:8080/reparaciones/mecanico/1 | jq
+curl -X GET http://localhost:8080/reparaciones/mecanico/1
 ```
 
 #### 5. Validación de respuestas
-
-```
+```bash
 # Ver código de estado HTTP
-curl -w "\n%{http_code}\n" -X GET http://localhost:8080/coches
+curl -w "\nStatus: %{http_code}\n" -X GET http://localhost:8080/coches
 
 # Ver solo los headers
 curl -I -X GET http://localhost:8080/coches
@@ -230,139 +208,58 @@ curl -I -X GET http://localhost:8080/coches
 curl -v -X GET http://localhost:8080/coches
 ```
 
-#### 6. Actualizar (PUT) registros
-
-```
-# Actualizar un coche
-curl -X PUT http://localhost:8080/coches/1 \
-  -H "Content-Type: application/json" \
-  -d '{
-    "matricula": "1111AAA",
-    "marca": "Toyota",
-    "modelo": "Corolla 2025"
-  }' | jq
-
-# Actualizar un mecánico
-curl -X PUT http://localhost:8080/mecanicos/1 \
-  -H "Content-Type: application/json" \
-  -d '{
-    "nombre": "Juan Pérez",
-    "especialidad": "Motor y Transmisión"
-  }' | jq
-
-# Actualizar una reparación
-curl -X PUT http://localhost:8080/reparaciones/1 \
-  -H "Content-Type: application/json" \
-  -d '{
-    "coche": {"id": 1},
-    "mecanico": {"id": 1},
-    "fecha": "2024-02-12",
-    "descripcion": "Revisión general completa",
-    "horas": 4,
-    "precio": 200.00
-  }' | jq
-```
-
-#### 7. Eliminar (DELETE) registros
-
-```
-# Eliminar una reparación (importante: deletear primero las reparaciones de un coche)
-curl -X DELETE http://localhost:8080/reparaciones/1
-
-# Eliminar un mecánico (sin reparaciones asociadas)
-curl -X DELETE http://localhost:8080/mecanicos/5
-
-# Eliminar un coche (sin reparaciones asociadas)
-curl -X DELETE http://localhost:8080/coches/10
-
-# Verificar que se ha eliminado
-curl -X GET http://localhost:8080/coches/10
-```
-
-#### 8. Errores comunes y validación
-
-```
-# Intentar crear un coche con matrícula duplicada (debe fallar)
-curl -X POST http://localhost:8080/coches \
-  -H "Content-Type: application/json" \
-  -d '{"matricula":"1111AAA","marca":"Ford","modelo":"Focus"}' | jq
-
-# Intentar obtener un registro que no existe (404)
-curl -w "\nStatus: %{http_code}\n" -X GET http://localhost:8080/coches/9999
-
-# Intentar crear una reparación sin coche válido (debe fallar)
-curl -X POST http://localhost:8080/reparaciones \
-  -H "Content-Type: application/json" \
-  -d '{
-    "coche": {"id": 9999},
-    "mecanico": {"id": 1},
-    "fecha": "2024-02-11",
-    "descripcion": "Test",
-    "horas": 1,
-    "precio": 50.00
-  }' | jq
-```
-
-### Depuración
-
-```
-# Ver cabeceras de respuesta
-curl -i http://localhost:8080/coches
-
-# Nivel de verbosidad completo
-curl -v http://localhost:8080/coches
-
-# Mostrar solo errores
-curl -s http://localhost:8080/coches 2>&1 | head -n 20
-```
-
 ## Tests
+El proyecto incluye **34 tests** organizados en tres categorías:
 
-El proyecto incluye **32 tests** organizados en tres categorías:
+### Tests unitarios (14 tests)
+Verifican el funcionamiento básico de las entidades:
+- `testCrearCoche` - Crear una instancia de Coche
+- `testSetMatricula` - Establecer matrícula
+- `testSetMarcaCoche` - Establecer marca
+- `testSetModeloCoche` - Establecer modelo
+- `testCocheNoNulo` - Verificar que Coche no es nulo
+- `testCrearMecanico` - Crear una instancia de Mecanico
+- `testSetNombreMecanico` - Establecer nombre
+- `testSetEspecialidad` - Establecer especialidad
+- `testMecanicoNoNulo` - Verificar que Mecanico no es nulo
+- `testCrearReparacion` - Crear una instancia de Reparacion
+- `testSetDescripcionReparacion` - Establecer descripción
+- `testSetHorasReparacion` - Establecer horas
+- `testSetPrecioReparacion` - Establecer precio
+- `testReparacionNoNula` - Verificar que Reparacion no es nula
 
-### Tests unitarios (11 tests)
-Verifican el funcionamiento básico de las entidades y repositorios:
-- `testCantidadCoches` - Verifica que hay 10 coches cargados por los fixtures.
-- `testCocheNoNull` - Comprueba que ningún coche es null.
-- `testIdsCoche` - Verifica que todos los coches tienen ID asignado.
-- `testMatriculasUnicas` - Comprueba que las matrículas son únicas.
-- `testAddCar` - Insertar un coche nuevo.
-- `testUpdateCar` - Actualizar marca y modelo de un coche.
-- `testDeleteCar` - Eliminar un coche.
-- `testAddMecanico` - Insertar un mecánico nuevo.
-- `testUpdateMecanico` - Actualizar el nombre de un mecánico.
-- `testDeleteMecanico` - Eliminar un mecánico.
-- `testCrearCocheDuplicadoMatricula` - Verifica error al duplicar matrícula.
+### Tests de integración (14 tests)
+Comprueban el funcionamiento de servicios y repositorios:
+**Tests de Coche:**
+- `testSaveCocheService` - Guardar coche en servicio
+- `testFindAllCochesService` - Buscar todos los coches
+- `testUpdateCocheService` - Actualizar coche
+- `testSaveCocheRepository` - Guardar coche en repositorio
+- `testFindCocheByIdRepository` - Buscar coche por ID
 
-### Tests de integración (7 tests)
-Comprueban las relaciones entre entidades y la integridad de la base de datos:
-- `testCrearMecanicoDuplicadoNombre` - Permite mecánicos con mismo nombre.
-- `testRelacionCocheReparacion` - Verifica relaciones coche-mecánico en reparaciones.
-- `testRelacionCocheMultipleReparaciones` - Un coche puede tener múltiples reparaciones.
-- `testAddReparacion` - Crear una reparación con coche y mecánico existentes.
-- `testActualizarReparacion` - Actualizar campos de una reparación.
-- `testEliminarReparacion` - Eliminar una reparación.
-- `testCrearReparacionSinCoche` - Error al crear reparación sin coche.
-- `testCrearReparacionSinMecanico` - Error al crear reparación sin mecánico.
+**Tests de Mecanico:**
+- `testSaveMecanicoService` - Guardar mecánico en servicio
+- `testFindAllMecanicosService` - Buscar todos los mecánicos
+- `testSaveMecanicoRepository` - Guardar mecánico en repositorio
+- `testFindMecanicoByIdRepository` - Buscar mecánico por ID
 
-### Tests de aceptación (14 tests)
-Validan escenarios completos de uso:
-- `testCrearVariasReparaciones` - Crear 5 reparaciones en lote.
-- `testEliminarCocheConReparaciones` - Eliminar coche tras borrar sus reparaciones.
-- `testEliminarMecanicoConReparaciones` - Eliminar mecánico tras borrar sus reparaciones.
-- `testActualizarDescripcionReparacion` - Actualizar solo la descripción.
-- `testActualizarFechaReparacion` - Actualizar solo la fecha.
-- `testCrearCocheConMatriculaUnica` - Crear coche con matrícula nueva.
-- `testCrearMecanicoNuevo` - Crear mecánico nuevo.
-- `testCrearReparacionVariasHorasYPrecio` - Verificar horas y precio.
-- `testActualizarTodosLosCamposReparacion` - Actualizar todos los campos.
-- `testCantidadCochesDespuesDeAdd` - Verificar incremento de coches.
-- `testCantidadMecanicosDespuesDeAdd` - Verificar incremento de mecánicos.
-- `testCantidadReparacionesDespuesDeAdd` - Verificar incremento de reparaciones.
-- `contextLoads` - Verifica que el contexto de Spring arranca correctamente.
+**Tests de Reparacion:**
+- `testSaveReparacionService` - Guardar reparación en servicio
+- `testFindReparacionByIdService` - Buscar reparación por ID
+- `testUpdateReparacionService` - Actualizar reparación
+- `testSaveReparacionRepository` - Guardar reparación en repositorio
+- `testFindReparacionByIdRepository` - Buscar reparación por ID
+
+### Tests de aceptación (6 tests)
+Validan los endpoints REST de la aplicación:
+- `testGetAllCochesEndpoint` - GET /coches
+- `testCreateCocheEndpoint` - POST /coches
+- `testGetAllMecanicosEndpoint` - GET /mecanicos
+- `testCreateMecanicoEndpoint` - POST /mecanicos
+- `testGetAllReparacionesEndpoint` - GET /reparaciones
+- `testCreateReparacionEndpoint` - POST /reparaciones
 
 ## Fixtures (Datos de prueba)
-
 La clase `DataFixtures` carga automáticamente datos al arrancar:
 
 - **5 mecánicos**: Juan Pérez, Ana Gómez, Luis Martínez, María López, Carlos Fernández.
@@ -370,7 +267,6 @@ La clase `DataFixtures` carga automáticamente datos al arrancar:
 - **10 reparaciones**: Una por cada coche, asignada a mecánicos de forma rotatoria.
 
 ## Dockerfile
-
 El Dockerfile despliega la aplicación WAR sobre **Tomcat 10.1** con JDK 21:
 1. Usa `tomcat:10.1.13-jdk21` como imagen base.
 2. Elimina las aplicaciones por defecto de Tomcat.
@@ -384,43 +280,44 @@ docker build -t taller-app .
 ```
 
 ## Docker Compose
-
 El `docker-compose.yaml` orquesta dos servicios:
 - **db**: MariaDB 11.1 con la base de datos `tallerdb`.
 - **app**: La aplicación Spring Boot sobre Tomcat, conectada a la base de datos.
 
-Variables de entorno configuradas automáticamente para la conexión.
+Las variables de entorno se configuran automáticamente la conexión.
 
 ## Pipeline CI/CD (GitHub Actions)
 
-El fichero `.github/workflows/ci.yml` define un pipeline con 4 jobs que se ejecutan en cada **push** o **pull request** a `main`:
+El fichero `.github/workflows/ci.yml` define un pipeline automático que se ejecuta en cada **push** o **pull request** a `master`:
 
-### 1. `lint` - Checkstyle Linting
-- Configura JDK 21.
-- Ejecuta `mvn checkstyle:check` para validar el formato y la correcteza del código.
+### Pasos que sigue el Pipeline:
+1. **Checkout code** - Obtiene el código del repositorio
+2. **Set up JDK 21** - Configura Java 21
+3. **Give execute permission to mvnw** - Permisos de ejecución en Linux
+4. **Wait for MariaDB** - Espera a que la base de datos esté lista
+5. **Validate code format with Checkstyle** - Valida el formato y la correctez del código
+   - Ejecuta `mvn validate` que incluye la verificación de Checkstyle
+   - Falla si no se cumple el estilo
+6. **Run Tests** - Ejecuta los 34 tests JUnit
+   - Tests unitarios
+   - Tests de integración
+   - Tests de aceptación
+   - Usa H2 en memoria (perfil `test`)
+7. **Package application** - Empaqueta la aplicación como un WAR
+8. **Build Docker image** - Construye la imagen Docker
 
-### 2. `unit-tests` - Tests unitarios e integración
-- Depende del paso `lint`.
-- Ejecuta `mvn clean test` usando H2 en memoria (sin necesidad de base de datos externa).
-- Ejecuta los 32 tests (unitarios, integración y aceptación con JUnit).
-
-### 3. `docker-build` - Construcción de la imagen Docker
-- Depende del paso `unit-tests`.
-- Empaqueta la aplicación como WAR.
-- Construye la imagen Docker.
-
-### 4. `acceptance-tests` - Tests de aceptación con Docker Compose
-- Depende del paso `docker-build`.
-- Levanta la aplicación completa con Docker Compose (App + MariaDB).
-- Ejecuta tests de aceptación contra los endpoints reales usando `curl`.
-- Verifica los endpoints GET y POST principales.
-- Limpia los contenedores al finalizar.
+### Configuración de Checkstyle
+El fichero `checkstyle.xml` define las siguientes reglas de validación:
+- Longitud máxima de línea: 120 caracteres
+- Nombre correcto de clases, métodos y variables
+- Espacios en blanco congruentes
+- Ausencia de imports innecesarios
+- Longitud máxima de métodos: 150 líneas
 
 ## Conclusión
-
-Con esta práctica se ha conseguido:
-- Integrar una aplicación Spring Boot con Docker y Docker Compose.
-- Automatizar la validación del código con Checkstyle.
-- Ejecutar tests unitarios, de integración y de aceptación de forma automatizada.
-- Construir imágenes Docker como parte del pipeline CI/CD.
-- Garantizar la calidad del código antes de cada despliegue.
+Con esta práctica he aprendido:
+- Como implementar una aplicación java con API REST, haciendo uso de Spring Boot con 3 entidades.
+- Configuración de MariaDB y Tomcat (haciendo uso de la aplicación).
+- Creación de varios tipos de tests.
+- Integración de checkstile para poder validar el código.
+- Cargar datos de prueba en la base de datos al arrancar la aplicación.
