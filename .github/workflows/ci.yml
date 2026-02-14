@@ -52,6 +52,11 @@ jobs:
             sleep 3
           done
 
+      #Validamos el formato y la correcteza del código con Checkstyle
+      - name: Validate code format with Checkstyle
+        working-directory: taller_contenedoores
+        run: ./mvnw validate
+
       #Ejecutamos los tests.
       - name: Run Tests
         working-directory: taller_contenedoores
