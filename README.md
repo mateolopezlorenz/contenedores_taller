@@ -93,35 +93,6 @@ mvn checkstyle:check
 | GET    | `/reparaciones/mecanico/{id}`  | Reparaciones por mecánico               |
 | POST   | `/reparaciones`                | Crear una nueva reparación              |
 
-### Ejemplos con curl
-```bash
-# Listar todos los coches
-curl http://localhost:8080/coches
-
-# Obtener un coche por ID
-curl http://localhost:8080/coches/1
-
-# Obtener un coche por matrícula
-curl http://localhost:8080/coches/matricula/1111AAA
-
-# Crear un nuevo coche
-curl -X POST http://localhost:8080/coches \
-  -H "Content-Type: application/json" \
-  -d '{"matricula":"NEW1234","marca":"Tesla","modelo":"Model 3"}'
-
-# Listar todos los mecánicos
-curl http://localhost:8080/mecanicos
-
-# Listar todas las reparaciones
-curl http://localhost:8080/reparaciones
-
-# Reparaciones de un coche concreto
-curl http://localhost:8080/reparaciones/coche/1
-
-# Reparaciones de un mecánico concreto
-curl http://localhost:8080/reparaciones/mecanico/1
-```
-
 ## Pruebas de la API con curl
 ### Requisitos
 - La aplicación debe estar ejecutándose en `http://localhost:8080`
@@ -143,33 +114,13 @@ curl -X GET http://localhost:8080/reparaciones
 #### 2. Crear nuevos registros
 ```bash
 # Crear un nuevo coche
-curl -X POST http://localhost:8080/coches \
-  -H "Content-Type: application/json" \
-  -d '{
-    "matricula": "9999ZZZ",
-    "marca": "Renault",
-    "modelo": "Clio"
-  }'
+curl -X POST http://localhost:8080/coches -H "Content-Type: application/json" -d "{\"matricula\":\"NUEVO9999\",\"marca\":\"Renault\",\"modelo\":\"Clio\"}"
 
 # Crear un nuevo mecánico
-curl -X POST http://localhost:8080/mecanicos \
-  -H "Content-Type: application/json" \
-  -d '{
-    "nombre": "Roberto",
-    "especialidad": "Electricista"
-  }'
+curl -X POST http://localhost:8080/mecanicos -H "Content-Type: application/json" -d "{\"nombre\":\"Roberto\",\"especialidad\":\"Electricista\"}"
 
-# Crear una nueva reparación (requiere IDs existentes de coche y mecánico)
-curl -X POST http://localhost:8080/reparaciones \
-  -H "Content-Type: application/json" \
-  -d '{
-    "coche": {"id": 1},
-    "mecanico": {"id": 1},
-    "fecha": "2024-02-11",
-    "descripcion": "Revisión completa",
-    "horas": 3,
-    "precio": 150.00
-  }'
+# Crear una nueva reparación
+curl -X POST http://localhost:8080/reparaciones -H "Content-Type: application/json" -d "{\"coche\":{\"id\":1},\"mecanico\":{\"id\":1},\"fecha\":\"2024-02-11\",\"descripcion\":\"Revision general\",\"horas\":3,\"precio\":150.00}"
 ```
 
 #### 3. Consultar por ID
@@ -196,22 +147,10 @@ curl -X GET http://localhost:8080/reparaciones/coche/1
 curl -X GET http://localhost:8080/reparaciones/mecanico/1
 ```
 
-#### 5. Validación de respuestas
-```bash
-# Ver código de estado HTTP
-curl -w "\nStatus: %{http_code}\n" -X GET http://localhost:8080/coches
-
-# Ver solo los headers
-curl -I -X GET http://localhost:8080/coches
-
-# Ver la respuesta completa con códigos de estado
-curl -v -X GET http://localhost:8080/coches
-```
-
 ## Tests
-El proyecto incluye **34 tests** organizados en tres categorías:
+El proyecto incluye **38 tests** organizados en **3 archivos** dentro de `src/test/java/daw2026/taller_contenedores/`:
 
-### Tests unitarios (14 tests)
+### 1. TestsUnitarios.java (14 tests)
 Verifican el funcionamiento básico de las entidades:
 - `testCrearCoche` - Crear una instancia de Coche
 - `testSetMatricula` - Establecer matrícula
@@ -228,7 +167,7 @@ Verifican el funcionamiento básico de las entidades:
 - `testSetPrecioReparacion` - Establecer precio
 - `testReparacionNoNula` - Verificar que Reparacion no es nula
 
-### Tests de integración (14 tests)
+### 2. TestsIntegracion.java (14 tests)
 Comprueban el funcionamiento de servicios y repositorios:
 **Tests de Coche:**
 - `testSaveCocheService` - Guardar coche en servicio
@@ -250,11 +189,15 @@ Comprueban el funcionamiento de servicios y repositorios:
 - `testSaveReparacionRepository` - Guardar reparación en repositorio
 - `testFindReparacionByIdRepository` - Buscar reparación por ID
 
-### Tests de aceptación (6 tests)
+### 3. TestsAceptacion.java (10 tests)
 Validan los endpoints REST de la aplicación:
 - `testGetAllCochesEndpoint` - GET /coches
 - `testCreateCocheEndpoint` - POST /coches
+- `testGetCocheByIdEndpoint` - GET /coches/{id}
+- `testUpdateCocheEndpoint` - PUT /coches/{id}
+- `testDeleteCocheEndpoint` - DELETE /coches/{id}
 - `testGetAllMecanicosEndpoint` - GET /mecanicos
+- `testGetMecanicoByIdEndpoint` - GET /mecanicos/{id}
 - `testCreateMecanicoEndpoint` - POST /mecanicos
 - `testGetAllReparacionesEndpoint` - GET /reparaciones
 - `testCreateReparacionEndpoint` - POST /reparaciones
@@ -298,7 +241,7 @@ El fichero `.github/workflows/ci.yml` define un pipeline automático que se ejec
 5. **Validate code format with Checkstyle** - Valida el formato y la correctez del código
    - Ejecuta `mvn validate` que incluye la verificación de Checkstyle
    - Falla si no se cumple el estilo
-6. **Run Tests** - Ejecuta los 34 tests JUnit
+6. **Run Tests** - Ejecuta los 38 tests JUnit
    - Tests unitarios
    - Tests de integración
    - Tests de aceptación

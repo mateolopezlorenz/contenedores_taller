@@ -25,8 +25,6 @@ public class TestsAceptacion {
     @Autowired
     private MecanicoService mecanicoService;
     @Autowired
-    private ReparacionService reparacionService;
-    @Autowired
     private WebApplicationContext webApplicationContext;
     private MockMvc mockMvc;
     private ObjectMapper objectMapper;
